@@ -6,24 +6,37 @@ module Typochecker
     attr_accessor :scope
     Octokit.default_media_type = "application/vnd.github.v3.text-match+json"
 
-    def initialize(options = {})
+    def initialize(options = { access_token: "00da29d6d1cc676510b92f604538c56a5876b880" })
       @client = Octokit::Client.new options
     end
 
-    def check(scope, words=[])
+    def check(scope, query=[])
       self.scope = scope
-      do_check words
+      do_check query
+    end
+
+    def check_random()
+      self.scope = random_repo
+      do_check "test"
     end
 
     private
-    def do_check(words)
+    def random_repo()
+      index = rand 30
+      puts index
+      repos = @client.search_repos "stars:>10000 sort:updated"
+      return nil unless repos && repos[:items].size > 0
+      return "repo:#{repos[:items][index][:full_name]}"
+    end
+
+    def do_check(query)
       matched = []
-      json = @client.search_code "#{words} #{scope}"
+      json = @client.search_code "#{query} #{scope}"
       json[:items].each do |item|
-      	item[:text_matches].each do |match|
-      		match.each { |k, v| puts "#{k}: #{v}" }
-      		matched << match
-      	end
+        item[:text_matches].each do |match|
+          match.each { |k, v| puts "#{k}: #{v}" if k == :fragment || k == :matches }
+          matched << match
+        end
       end
       matched
     end

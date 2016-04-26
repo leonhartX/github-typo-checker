@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require "typochecker"
+Typochecker::CLI.start
