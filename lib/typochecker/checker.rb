@@ -6,7 +6,7 @@ module Typochecker
     attr_accessor :scope
     Octokit.default_media_type = "application/vnd.github.v3.text-match+json"
 
-    def initialize(options = { access_token: "00da29d6d1cc676510b92f604538c56a5876b880" })
+    def initialize(options = { access_token: ENV['GITHUB_TOKEN'] })
       @client = Octokit::Client.new options
     end
 
